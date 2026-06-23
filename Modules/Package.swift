@@ -1,0 +1,33 @@
+// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "RepdModules",
+    platforms: [
+        .iOS(.v18)
+    ],
+    products: [
+        .library(name: "RepdDesignSystem", targets: ["RepdDesignSystem"]),
+        .library(name: "RepdCore",         targets: ["RepdCore"]),
+        .library(name: "RepdData",         targets: ["RepdData"]),
+        .library(name: "RepdFeatures",     targets: ["RepdFeatures"]),
+    ],
+    targets: [
+        // Leaf modules
+        .target(name: "RepdDesignSystem"),
+        .target(name: "RepdCore"),
+        .target(name: "RepdData"),
+
+        // Feature layer
+        .target(
+            name: "RepdFeatures",
+            dependencies: ["RepdData", "RepdCore", "RepdDesignSystem"]
+        ),
+
+        // One test target per module
+        .testTarget(name: "RepdDesignSystemTests", dependencies: ["RepdDesignSystem"]),
+        .testTarget(name: "RepdCoreTests",         dependencies: ["RepdCore"]),
+        .testTarget(name: "RepdDataTests",         dependencies: ["RepdData"]),
+        .testTarget(name: "RepdFeaturesTests",     dependencies: ["RepdFeatures"]),
+    ]
+)
