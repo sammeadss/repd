@@ -1,0 +1,21 @@
+# SwiftLint configuration — https://github.com/realm/SwiftLint
+# Run `swiftlint` locally before committing; CI runs `swiftlint --strict`
+# (warnings fail the build), so keep this clean.
+
+opt_in_rules:
+  - empty_count
+  - first_where
+  - force_unwrapping
+  - redundant_nil_coalescing
+  - toggle_bool
+
+disabled_rules:
+  # SwiftFormat owns trailing commas (its trailingCommas rule adds them);
+  # disable SwiftLint's opposing rule so the two tools don't fight.
+  - trailing_comma
+
+excluded:
+  - .build
+  - Modules/.build
+  # Xcode-generated UI-test boilerplate; lint once it's replaced with real tests.
+  - Repd/RepdUITests

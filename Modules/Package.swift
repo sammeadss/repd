@@ -4,13 +4,13 @@ import PackageDescription
 let package = Package(
     name: "RepdModules",
     platforms: [
-        .iOS(.v18)
+        .iOS(.v18),
     ],
     products: [
         .library(name: "RepdDesignSystem", targets: ["RepdDesignSystem"]),
-        .library(name: "RepdCore",         targets: ["RepdCore"]),
-        .library(name: "RepdData",         targets: ["RepdData"]),
-        .library(name: "RepdFeatures",     targets: ["RepdFeatures"]),
+        .library(name: "RepdCore", targets: ["RepdCore"]),
+        .library(name: "RepdData", targets: ["RepdData"]),
+        .library(name: "RepdFeatures", targets: ["RepdFeatures"]),
     ],
     targets: [
         // Leaf modules
@@ -26,8 +26,8 @@ let package = Package(
 
         // One test target per module
         .testTarget(name: "RepdDesignSystemTests", dependencies: ["RepdDesignSystem"]),
-        .testTarget(name: "RepdCoreTests",         dependencies: ["RepdCore"]),
-        .testTarget(name: "RepdDataTests",         dependencies: ["RepdData"]),
-        .testTarget(name: "RepdFeaturesTests",     dependencies: ["RepdFeatures"]),
+        .testTarget(name: "RepdCoreTests", dependencies: ["RepdCore"]),
+        .testTarget(name: "RepdDataTests", dependencies: ["RepdData"]),
+        .testTarget(name: "RepdFeaturesTests", dependencies: ["RepdFeatures"]),
     ]
 )
