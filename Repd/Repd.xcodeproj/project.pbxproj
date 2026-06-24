@@ -34,6 +34,7 @@
 		93BC12A22FE63B0000D0FB3F /* Repd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Repd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93BC12AF2FE63B0100D0FB3F /* RepdTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepdTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93BC12B92FE63B0100D0FB3F /* RepdUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepdUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		93DF0A132FEC1ABE00E59BD4 /* Modules */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Modules; path = ../Modules; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -86,6 +87,7 @@
 		93BC12992FE63B0000D0FB3F = {
 			isa = PBXGroup;
 			children = (
+				93DF0A132FEC1ABE00E59BD4 /* Modules */,
 				93BC12A42FE63B0000D0FB3F /* Repd */,
 				93BC12B22FE63B0100D0FB3F /* RepdTests */,
 				93BC12BC2FE63B0100D0FB3F /* RepdUITests */,
