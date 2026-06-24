@@ -1,0 +1,5 @@
+# SwiftFormat configuration — https://github.com/nicklockwood/swiftformat
+# Run `swiftformat .` to auto-fix; CI runs `swiftformat --lint .`.
+
+--swiftversion 6.0
+--exclude .build,Modules/.build

@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    name: Build & Test
+    name: Lint, Build & Test
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -18,6 +18,15 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+
+      - name: Install linters
+        run: brew install swiftlint swiftformat
+
+      - name: SwiftFormat (lint)
+        run: swiftformat --lint .
+
+      - name: SwiftLint (strict)
+        run: swiftlint --strict
 
       - name: Test Swift package
         run: swift test --package-path Modules
