@@ -33,7 +33,7 @@ import Testing
     let exercise = Exercise(
         name: "Squat",
         primaryMuscle: "legs",
-        equipment: "barbell",
+        isBodyweight: true,
         isCustom: false,
         ownerId: nil,
         updatedAt: date,
@@ -73,4 +73,17 @@ import Testing
     let fetched = try repository.fetchDetails(id: workout.id)
 
     #expect(fetched == details)
+}
+
+@Test func seedsExerciseCatalog() throws {
+    let database = try AppDatabase.empty()
+
+    try database.read { db in
+        let count = try Exercise.fetchCount(db)
+        #expect(count == 8)
+
+        let pullUp = try Exercise.fetchOne(db, id: "00000000-0000-0000-0000-000000000006")
+        #expect(pullUp?.name == "Pull-Up")
+        #expect(pullUp?.isBodyweight == true)
+    }
 }
