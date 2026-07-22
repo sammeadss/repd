@@ -8,7 +8,7 @@
 import Foundation
 import GRDB
 
-public struct WorkoutExercise: Codable, Identifiable, FetchableRecord, PersistableRecord {
+public struct WorkoutExercise: Codable, Identifiable, Equatable, FetchableRecord, PersistableRecord {
     public var id: String = UUID().uuidString
     public var workoutId: String
     public var exerciseId: String
