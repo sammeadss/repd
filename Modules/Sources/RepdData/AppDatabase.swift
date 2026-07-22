@@ -35,7 +35,7 @@ public struct AppDatabase {
                 t.primaryKey("id", .text)
                 t.column("name", .text).notNull()
                 t.column("primaryMuscle", .text).notNull()
-                t.column("equipment", .text).notNull()
+                t.column("isBodyweight", .boolean).notNull()
                 t.column("isCustom", .boolean).notNull()
                 t.column("ownerId", .text)
                 t.column("updatedAt", .datetime).notNull()
@@ -71,6 +71,95 @@ public struct AppDatabase {
                 t.column("createdAt", .datetime).notNull()
                 t.column("updatedAt", .datetime).notNull()
                 t.column("deletedAt", .datetime)
+            }
+        }
+
+        migrator.registerMigration("v2: seed exercise catalog") { db in
+            let seededAt = Date(timeIntervalSince1970: 0)
+            let exercises = [
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000001",
+                    name: "Barbell Bench Press",
+                    primaryMuscle: "chest",
+                    isBodyweight: false,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000002",
+                    name: "Barbell Back Squat",
+                    primaryMuscle: "legs",
+                    isBodyweight: false,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000003",
+                    name: "Bent-Over Barbell Row",
+                    primaryMuscle: "back",
+                    isBodyweight: false,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000004",
+                    name: "Pec Deck",
+                    primaryMuscle: "chest",
+                    isBodyweight: false,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000005",
+                    name: "Barbell Overhead Press",
+                    primaryMuscle: "shoulders",
+                    isBodyweight: false,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000006",
+                    name: "Pull-Up",
+                    primaryMuscle: "back",
+                    isBodyweight: true,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000007",
+                    name: "Push-Up",
+                    primaryMuscle: "chest",
+                    isBodyweight: true,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+                Exercise(
+                    id: "00000000-0000-0000-0000-000000000008",
+                    name: "Dip",
+                    primaryMuscle: "chest",
+                    isBodyweight: true,
+                    isCustom: false,
+                    ownerId: nil,
+                    updatedAt: seededAt,
+                    deletedAt: nil
+                ),
+            ]
+            for exercise in exercises {
+                try exercise.insert(db)
             }
         }
 
