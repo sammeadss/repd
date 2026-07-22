@@ -77,6 +77,14 @@ public struct AppDatabase {
         return migrator
     }
 
+    func write<T>(_ updates: (Database) throws -> T) throws -> T {
+        try dbWriter.write(updates)
+    }
+
+    func read<T>(_ value: (Database) throws -> T) throws -> T {
+        try dbWriter.read(value)
+    }
+
     public static func empty() throws -> AppDatabase {
         try AppDatabase(DatabaseQueue())
     }
