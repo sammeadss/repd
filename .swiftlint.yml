@@ -19,6 +19,9 @@ disabled_rules:
 identifier_name:
   min_length:
     warning: 2
+  # `t` is GRDB's conventional name for the table builder in migrations.
+  excluded:
+    - t
 
 excluded:
   - .build

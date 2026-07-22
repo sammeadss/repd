@@ -1,6 +1,6 @@
 @testable import RepdData
 import Testing
 
-@Test func placeholder() {
-    // Replace with real tests
+@Test func migrationRuns() throws {
+    _ = try AppDatabase.empty()
 }
