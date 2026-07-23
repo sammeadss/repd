@@ -174,7 +174,19 @@ public struct AppDatabase {
         try dbWriter.read(value)
     }
 
-    public static func empty() throws -> AppDatabase {
-        try AppDatabase(DatabaseQueue())
+    public static func makeShared() throws -> AppDatabase {
+        let fileManager = FileManager.default
+        let appSupportURL = try fileManager.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        let directoryURL = appSupportURL.appendingPathComponent("database", isDirectory: true)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+
+        let databaseURL = directoryURL.appendingPathComponent("repd.sqlite")
+        let dbQueue = try DatabaseQueue(path: databaseURL.path)
+        return try AppDatabase(dbQueue)
     }
 }
