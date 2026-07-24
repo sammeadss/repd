@@ -173,6 +173,10 @@ public struct AppDatabase {
     func read<T>(_ value: (Database) throws -> T) throws -> T {
         try dbWriter.read(value)
     }
+    
+    public static func empty() throws -> AppDatabase {
+        try AppDatabase(DatabaseQueue())
+    }
 
     public static func makeShared() throws -> AppDatabase {
         let fileManager = FileManager.default

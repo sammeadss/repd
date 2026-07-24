@@ -7,7 +7,7 @@ let package = Package(
         .iOS(.v18),
         // macOS is declared only so the package builds/tests on the host
         // (swift build/test); the app ships iOS-only.
-        .macOS(.v13),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "RepdDesignSystem", targets: ["RepdDesignSystem"]),
