@@ -15,4 +15,20 @@ public struct WorkoutExercise: Codable, Identifiable, Equatable, FetchableRecord
     public var position: Int
     public var updatedAt: Date
     public var deletedAt: Date?
+
+    public init(
+        id: String = UUID().uuidString,
+        workoutId: String,
+        exerciseId: String,
+        position: Int,
+        updatedAt: Date,
+        deletedAt: Date? = nil
+    ) {
+        self.id = id
+        self.workoutId = workoutId
+        self.exerciseId = exerciseId
+        self.position = position
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+    }
 }
