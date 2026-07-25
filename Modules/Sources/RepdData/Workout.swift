@@ -16,4 +16,22 @@ public struct Workout: Codable, Identifiable, Equatable, FetchableRecord, Persis
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
+
+    public init(
+        id: String = UUID().uuidString,
+        startedAt: Date,
+        endedAt: Date? = nil,
+        note: String? = nil,
+        createdAt: Date,
+        updatedAt: Date,
+        deletedAt: Date? = nil
+    ) {
+        self.id = id
+        self.startedAt = startedAt
+        self.endedAt = endedAt
+        self.note = note
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+    }
 }

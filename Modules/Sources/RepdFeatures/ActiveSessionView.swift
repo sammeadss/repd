@@ -11,24 +11,41 @@ import SwiftUI
 
 struct ActiveSessionView: View {
     @Environment(AppModel.self) private var appModel
-    @State private var exercises: [Exercise] = []
+    @State private var model: ActiveSessionModel?
+    @State private var showingPicker = false
 
     var body: some View {
-        List(exercises) { exercise in
-            Text(exercise.name)
-                .font(Typography.body)
-                .foregroundStyle(Palette.green)
+        ZStack {
+            Palette.black.ignoresSafeArea()
+
+            if let model {
+                VStack(spacing: Spacing.md) {
+                    Text("SESSION")
+                        .font(Typography.title)
+                        .foregroundStyle(Palette.green)
+
+                    Text("Exercises: \(model.exercises.count)")
+                        .font(Typography.body)
+                        .foregroundStyle(Palette.greenDim)
+
+                    Button("+ Add Exercise") {
+                        showingPicker = true
+                    }
+                    .font(Typography.body)
+                    .foregroundStyle(Palette.green)
+                }
+                .sheet(isPresented: $showingPicker) {
+                    ExercisePickerView { exercise in
+                        model.addExercise(exercise)
+                        showingPicker = false
+                    }
+                }
+            }
         }
         .task {
-            do {
-                exercises = try appModel.exerciseRepository.fetchAllExercises()
-            } catch {
-                print("Failed to load exercises: \(error)")
+            if model == nil {
+                model = ActiveSessionModel(workoutRepository: appModel.workoutRepository)
             }
         }
     }
-}
-
-#Preview {
-    ActiveSessionView()
 }

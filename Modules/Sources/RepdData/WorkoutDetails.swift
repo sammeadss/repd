@@ -15,4 +15,12 @@ public struct WorkoutDetails: Equatable {
 public struct WorkoutExerciseWithSets: Equatable {
     public var workoutExercise: WorkoutExercise
     public var sets: [SetEntry]
+
+    public init(
+        workoutExercise: WorkoutExercise,
+        sets: [SetEntry]
+    ) {
+        self.workoutExercise = workoutExercise
+        self.sets = sets
+    }
 }
