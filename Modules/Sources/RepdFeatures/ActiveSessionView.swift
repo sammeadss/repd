@@ -13,6 +13,7 @@ struct ActiveSessionView: View {
     @Environment(AppModel.self) private var appModel
     @State private var model: ActiveSessionModel?
     @State private var showingPicker = false
+    @State private var showingSummary = false
 
     var body: some View {
         ZStack {
@@ -38,6 +39,7 @@ struct ActiveSessionView: View {
 
                     Button("END SESSION") {
                         model.endSession()
+                        showingSummary = true
                     }
                     .font(Typography.body)
                     .foregroundStyle(Palette.green)
@@ -47,6 +49,13 @@ struct ActiveSessionView: View {
                         model.addExercise(exercise)
                         showingPicker = false
                     }
+                }
+                .navigationDestination(isPresented: $showingSummary) {
+                    SessionSummaryView(
+                        duration: model.duration,
+                        totalSets: model.totalSets,
+                        totalVolume: model.totalVolume
+                    )
                 }
             }
         }

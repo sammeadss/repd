@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import RepdCore
 import RepdData
 
 @Observable
@@ -79,6 +80,19 @@ final class ActiveSessionModel {
         } catch {
             print("Failed to save workout: \(error)")
         }
+    }
+
+    var totalSets: Int {
+        exercises.flatMap(\.sets).count
+    }
+
+    var totalVolume: Double {
+        WorkoutMath.totalVolume(of: exercises.flatMap(\.sets).map { (reps: $0.reps, weight: $0.weight) })
+    }
+
+    var duration: TimeInterval {
+        guard let endedAt = workout.endedAt else { return 0 }
+        return endedAt.timeIntervalSince(workout.startedAt)
     }
 }
 
