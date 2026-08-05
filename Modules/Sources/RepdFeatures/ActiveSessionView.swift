@@ -35,6 +35,12 @@ struct ActiveSessionView: View {
                     }
                     .font(Typography.body)
                     .foregroundStyle(Palette.green)
+
+                    Button("END SESSION") {
+                        model.endSession()
+                    }
+                    .font(Typography.body)
+                    .foregroundStyle(Palette.green)
                 }
                 .sheet(isPresented: $showingPicker) {
                     ExercisePickerView { exercise in

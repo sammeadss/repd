@@ -10,6 +10,14 @@ import Foundation
 public struct WorkoutDetails: Equatable {
     public var workout: Workout
     public var exercises: [WorkoutExerciseWithSets]
+
+    public init(
+        workout: Workout,
+        exercises: [WorkoutExerciseWithSets]
+    ) {
+        self.workout = workout
+        self.exercises = exercises
+    }
 }
 
 public struct WorkoutExerciseWithSets: Equatable {
