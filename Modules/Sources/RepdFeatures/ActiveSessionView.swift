@@ -25,9 +25,9 @@ struct ActiveSessionView: View {
                         .foregroundStyle(Palette.green)
 
                     ForEach(model.exercises) { item in
-                        Text(item.exercise.name)
-                            .font(Typography.body)
-                            .foregroundStyle(Palette.greenDim)
+                        SessionExerciseRow(item: item) { reps, weight in
+                            model.addSet(to: item.id, reps: reps, weight: weight)
+                        }
                     }
 
                     Button("+ Add Exercise") {
