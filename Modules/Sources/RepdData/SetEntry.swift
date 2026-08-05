@@ -21,4 +21,32 @@ public struct SetEntry: Codable, Identifiable, Equatable, FetchableRecord, Persi
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
+
+    public init(
+        id: String = UUID().uuidString,
+        workoutExerciseId: String,
+        position: Int,
+        reps: Int,
+        weight: Double,
+        weightUnit: String,
+        rpe: Double? = nil,
+        isWarmup: Bool,
+        isCompleted: Bool,
+        createdAt: Date,
+        updatedAt: Date,
+        deletedAt: Date? = nil
+    ) {
+        self.id = id
+        self.workoutExerciseId = workoutExerciseId
+        self.position = position
+        self.reps = reps
+        self.weight = weight
+        self.weightUnit = weightUnit
+        self.rpe = rpe
+        self.isWarmup = isWarmup
+        self.isCompleted = isCompleted
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+    }
 }
