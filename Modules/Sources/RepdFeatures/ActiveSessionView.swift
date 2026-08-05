@@ -24,9 +24,11 @@ struct ActiveSessionView: View {
                         .font(Typography.title)
                         .foregroundStyle(Palette.green)
 
-                    Text("Exercises: \(model.exercises.count)")
-                        .font(Typography.body)
-                        .foregroundStyle(Palette.greenDim)
+                    ForEach(model.exercises) { item in
+                        Text(item.exercise.name)
+                            .font(Typography.body)
+                            .foregroundStyle(Palette.greenDim)
+                    }
 
                     Button("+ Add Exercise") {
                         showingPicker = true

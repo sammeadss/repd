@@ -13,7 +13,7 @@ import RepdData
 final class ActiveSessionModel {
     private let workoutRepository: WorkoutRepository
     private(set) var workout: Workout
-    private(set) var exercises: [WorkoutExerciseWithSets] = []
+    private(set) var exercises: [SessionExercise] = []
 
     init(workoutRepository: WorkoutRepository) {
         self.workoutRepository = workoutRepository
@@ -37,6 +37,34 @@ final class ActiveSessionModel {
             deletedAt: nil
         )
 
-        exercises.append(WorkoutExerciseWithSets(workoutExercise: workoutExercise, sets: []))
+        exercises.append(SessionExercise(exercise: exercise, workoutExercise: workoutExercise, sets: []))
+    }
+
+    func addSet(to sessionExerciseId: String, reps: Int, weight: Double) {
+        guard let index = exercises.firstIndex(where: { $0.id == sessionExerciseId }) else { return }
+
+        let now = Date()
+        let set = SetEntry(
+            workoutExerciseId: exercises[index].workoutExercise.id,
+            position: exercises[index].sets.count,
+            reps: reps,
+            weight: weight,
+            weightUnit: "kg",
+            isWarmup: false,
+            isCompleted: true,
+            createdAt: now,
+            updatedAt: now
+        )
+
+        exercises[index].sets.append(set)
+    }
+}
+
+struct SessionExercise: Identifiable {
+    let exercise: Exercise
+    var workoutExercise: WorkoutExercise
+    var sets: [SetEntry]
+    var id: String {
+        workoutExercise.id
     }
 }
