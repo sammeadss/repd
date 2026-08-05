@@ -58,6 +58,28 @@ final class ActiveSessionModel {
 
         exercises[index].sets.append(set)
     }
+
+    func endSession() {
+        let now = Date()
+        workout.endedAt = now
+        workout.updatedAt = now
+
+        let details = WorkoutDetails(
+            workout: workout,
+            exercises: exercises.map { sessionExercise in
+                WorkoutExerciseWithSets(
+                    workoutExercise: sessionExercise.workoutExercise,
+                    sets: sessionExercise.sets
+                )
+            }
+        )
+
+        do {
+            try workoutRepository.save(details)
+        } catch {
+            print("Failed to save workout: \(error)")
+        }
+    }
 }
 
 struct SessionExercise: Identifiable {
