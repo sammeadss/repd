@@ -38,7 +38,14 @@ final class ActiveSessionModel {
             deletedAt: nil
         )
 
-        exercises.append(SessionExercise(exercise: exercise, workoutExercise: workoutExercise, sets: []))
+        let previousSets = (try? workoutRepository.fetchLastSets(for: exercise.id)) ?? []
+
+        exercises.append(SessionExercise(
+            exercise: exercise,
+            previousSets: previousSets,
+            workoutExercise: workoutExercise,
+            sets: []
+        ))
     }
 
     func addSet(to sessionExerciseId: String, reps: Int, weight: Double) {
@@ -98,6 +105,7 @@ final class ActiveSessionModel {
 
 struct SessionExercise: Identifiable {
     let exercise: Exercise
+    let previousSets: [SetEntry]
     var workoutExercise: WorkoutExercise
     var sets: [SetEntry]
     var id: String {
