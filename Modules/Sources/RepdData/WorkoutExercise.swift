@@ -32,3 +32,7 @@ public struct WorkoutExercise: Codable, Identifiable, Equatable, FetchableRecord
         self.deletedAt = deletedAt
     }
 }
+
+extension WorkoutExercise {
+    static let workout = belongsTo(Workout.self)
+}

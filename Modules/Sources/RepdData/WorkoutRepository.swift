@@ -62,4 +62,24 @@ public struct WorkoutRepository {
             return WorkoutDetails(workout: workout, exercises: exercises)
         }
     }
+
+    public func fetchLastSets(for exerciseId: String) throws -> [SetEntry] {
+        try database.read { db in
+            let lastWorkoutExercise = try WorkoutExercise.filter(Column("exerciseId") == exerciseId)
+                .filter(Column("deletedAt") == nil)
+                .joining(required: WorkoutExercise.workout
+                    .filter(Column("deletedAt") == nil)
+                    .order(Column("startedAt").desc))
+                .fetchOne(db)
+
+            guard let lastWorkoutExercise else {
+                return []
+            }
+
+            return try SetEntry.filter(Column("workoutExerciseId") == lastWorkoutExercise.id)
+                .filter(Column("deletedAt") == nil)
+                .order(Column("position"))
+                .fetchAll(db)
+        }
+    }
 }
