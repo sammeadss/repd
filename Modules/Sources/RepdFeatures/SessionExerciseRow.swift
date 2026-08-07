@@ -23,11 +23,23 @@ struct SessionExerciseRow: View {
         _weight = State(initialValue: item.previousSets.first?.weight ?? 20.0)
     }
 
+    private var lastWorkoutSummary: String {
+        "LAST: " + item.previousSets
+            .map { "\($0.reps)×\($0.weight.formatted())" }
+            .joined(separator: ", ")
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
             Text(item.exercise.name)
                 .font(Typography.body)
                 .foregroundStyle(Palette.green)
+
+            if !item.previousSets.isEmpty {
+                Text(lastWorkoutSummary)
+                    .font(Typography.label)
+                    .foregroundStyle(Palette.greenDim)
+            }
 
             ForEach(item.sets) { set in
                 Text("\(set.reps) x \(set.weight, specifier: "%.1f")kg")
