@@ -13,8 +13,15 @@ struct SessionExerciseRow: View {
     let item: SessionExercise
     let onAddSet: (Int, Double) -> Void
 
-    @State private var reps = 8
-    @State private var weight = 20.0
+    @State private var reps: Int
+    @State private var weight: Double
+
+    init(item: SessionExercise, onAddSet: @escaping (Int, Double) -> Void) {
+        self.item = item
+        self.onAddSet = onAddSet
+        _reps = State(initialValue: item.previousSets.first?.reps ?? 8)
+        _weight = State(initialValue: item.previousSets.first?.weight ?? 20.0)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
