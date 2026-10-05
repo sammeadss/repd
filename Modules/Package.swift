@@ -17,6 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
+        .package(url: "https://github.com/supabase/supabase-swift.git", from: "2.0.0"),
     ],
     targets: [
         // Leaf modules
@@ -27,6 +28,7 @@ let package = Package(
             dependencies: [
                 "SetctlCore",
                 .product(name: "GRDB", package: "GRDB.swift"),
+                .product(name: "Supabase", package: "supabase-swift"),
             ]
         ),
 
