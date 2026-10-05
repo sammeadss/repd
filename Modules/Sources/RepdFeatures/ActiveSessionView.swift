@@ -14,6 +14,9 @@ struct ActiveSessionView: View {
     @State private var model: ActiveSessionModel?
     @State private var showingPicker = false
     @State private var showingSummary = false
+    #if os(iOS)
+        @State private var editMode: EditMode = .inactive
+    #endif
 
     var body: some View {
         ZStack {
@@ -39,6 +42,8 @@ struct ActiveSessionView: View {
                                     model.addSet(to: item.id, reps: reps, weight: weight)
                                 } onDeleteSet: { setId in
                                     model.deleteSet(from: item.id, setId: setId)
+                                } onMoveSets: { source, destination in
+                                    model.moveSets(in: item.id, from: source, to: destination)
                                 }
                                 .listRowBackground(Color.clear)
                             }
@@ -62,6 +67,15 @@ struct ActiveSessionView: View {
                         }
                     }
                     .scrollContentBackground(.hidden)
+                    #if os(iOS)
+                        .environment(\.editMode, $editMode)
+                        .toolbar {
+                            Button(editMode.isEditing ? "Done" : "Edit") {
+                                editMode = editMode.isEditing ? .inactive : .active
+                            }
+                            .foregroundStyle(Palette.green)
+                        }
+                    #endif
                 }
                 .sheet(isPresented: $showingPicker) {
                     ExercisePickerView { exercise in
