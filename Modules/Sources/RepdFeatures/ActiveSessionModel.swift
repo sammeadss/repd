@@ -89,6 +89,17 @@ final class ActiveSessionModel {
         }
     }
 
+    func deleteSet(from sessionExerciseId: String, setId: String) {
+        guard let index = exercises.firstIndex(where: { $0.id == sessionExerciseId }) else { return }
+        guard let setIndex = exercises[index].sets.firstIndex(where: { $0.id == setId }) else { return }
+
+        exercises[index].sets.remove(at: setIndex)
+
+        for newPosition in exercises[index].sets.indices {
+            exercises[index].sets[newPosition].position = newPosition
+        }
+    }
+
     var totalSets: Int {
         exercises.flatMap(\.sets).count
     }
