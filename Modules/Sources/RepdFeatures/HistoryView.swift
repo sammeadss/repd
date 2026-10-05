@@ -1,0 +1,48 @@
+//
+//  HistoryView.swift
+//  RepdModules
+//
+//  Created by Samuel Meads on 10/5/26.
+//
+
+import RepdData
+import RepdDesignSystem
+import SwiftUI
+
+public struct HistoryView: View {
+    @Environment(AppModel.self) private var appModel
+    @State private var summaries: [WorkoutSummary] = []
+
+    public init() {}
+
+    public var body: some View {
+        ZStack {
+            Palette.black.ignoresSafeArea()
+
+            List(summaries) { summary in
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text(summary.startedAt.formatted(date: .abbreviated, time: .omitted))
+                        .font(Typography.body)
+                        .foregroundStyle(Palette.green)
+
+                    Text("\(formattedDuration(summary.duration)) \(summary.totalVolume, specifier: "%.1f")kg")
+                        .font(Typography.label)
+                        .foregroundStyle(Palette.greenDim)
+                }
+                .listRowBackground(Color.clear)
+            }
+            .scrollContentBackground(.hidden)
+        }
+        .task {
+            do {
+                summaries = try appModel.workoutRepository.fetchRecentWorkouts()
+            } catch {
+                print("Failed to load workout history: \(error)")
+            }
+        }
+    }
+
+    private func formattedDuration(_ duration: TimeInterval) -> String {
+        Duration.seconds(duration).formatted(.time(pattern: .minuteSecond))
+    }
+}

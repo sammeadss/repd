@@ -6,6 +6,7 @@
 //
 
 import RepdData
+import RepdDesignSystem
 import RepdFeatures
 import SwiftUI
 
@@ -24,8 +25,19 @@ struct RepdApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environment(appModel)
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+
+                HistoryView()
+                    .tabItem {
+                        Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                    }
+            }
+            .tint(Palette.green)
+            .environment(appModel)
         }
     }
 }
