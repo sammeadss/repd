@@ -16,22 +16,29 @@ public struct HistoryView: View {
     public init() {}
 
     public var body: some View {
-        ZStack {
-            Palette.black.ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                Palette.black.ignoresSafeArea()
 
-            List(summaries) { summary in
-                VStack(alignment: .leading, spacing: Spacing.xs) {
-                    Text(summary.startedAt.formatted(date: .abbreviated, time: .omitted))
-                        .font(Typography.body)
-                        .foregroundStyle(Palette.green)
+                List(summaries) { summary in
+                    NavigationLink(value: summary.id) {
+                        VStack(alignment: .leading, spacing: Spacing.xs) {
+                            Text(summary.startedAt.formatted(date: .abbreviated, time: .omitted))
+                                .font(Typography.body)
+                                .foregroundStyle(Palette.green)
 
-                    Text("\(formattedDuration(summary.duration)) \(summary.totalVolume, specifier: "%.1f")kg")
-                        .font(Typography.label)
-                        .foregroundStyle(Palette.greenDim)
+                            Text("\(formattedDuration(summary.duration)) \(summary.totalVolume, specifier: "%.1f")kg")
+                                .font(Typography.label)
+                                .foregroundStyle(Palette.greenDim)
+                        }
+                    }
+                    .listRowBackground(Color.clear)
                 }
-                .listRowBackground(Color.clear)
+                .scrollContentBackground(.hidden)
+                .navigationDestination(for: String.self) { workoutId in
+                    WorkoutDetailView(workoutId: workoutId)
+                }
             }
-            .scrollContentBackground(.hidden)
         }
         .task {
             do {
