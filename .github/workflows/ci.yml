@@ -34,7 +34,7 @@ jobs:
       - name: Build app
         run: >
           xcodebuild build
-          -project Repd/Repd.xcodeproj
-          -scheme Repd
+          -project Setctl/Setctl.xcodeproj
+          -scheme Setctl
           -destination 'generic/platform=iOS Simulator'
           CODE_SIGNING_ALLOWED=NO

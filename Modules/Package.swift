@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "RepdModules",
+    name: "SetctlModules",
     platforms: [
         .iOS(.v18),
         // macOS is declared only so the package builds/tests on the host
@@ -10,36 +10,36 @@ let package = Package(
         .macOS(.v14),
     ],
     products: [
-        .library(name: "RepdDesignSystem", targets: ["RepdDesignSystem"]),
-        .library(name: "RepdCore", targets: ["RepdCore"]),
-        .library(name: "RepdData", targets: ["RepdData"]),
-        .library(name: "RepdFeatures", targets: ["RepdFeatures"]),
+        .library(name: "SetctlDesignSystem", targets: ["SetctlDesignSystem"]),
+        .library(name: "SetctlCore", targets: ["SetctlCore"]),
+        .library(name: "SetctlData", targets: ["SetctlData"]),
+        .library(name: "SetctlFeatures", targets: ["SetctlFeatures"]),
     ],
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
     ],
     targets: [
         // Leaf modules
-        .target(name: "RepdDesignSystem"),
-        .target(name: "RepdCore"),
+        .target(name: "SetctlDesignSystem"),
+        .target(name: "SetctlCore"),
         .target(
-            name: "RepdData",
+            name: "SetctlData",
             dependencies: [
-                "RepdCore",
+                "SetctlCore",
                 .product(name: "GRDB", package: "GRDB.swift"),
             ]
         ),
 
         // Feature layer
         .target(
-            name: "RepdFeatures",
-            dependencies: ["RepdData", "RepdCore", "RepdDesignSystem"]
+            name: "SetctlFeatures",
+            dependencies: ["SetctlData", "SetctlCore", "SetctlDesignSystem"]
         ),
 
         // One test target per module
-        .testTarget(name: "RepdDesignSystemTests", dependencies: ["RepdDesignSystem"]),
-        .testTarget(name: "RepdCoreTests", dependencies: ["RepdCore"]),
-        .testTarget(name: "RepdDataTests", dependencies: ["RepdData"]),
-        .testTarget(name: "RepdFeaturesTests", dependencies: ["RepdFeatures"]),
+        .testTarget(name: "SetctlDesignSystemTests", dependencies: ["SetctlDesignSystem"]),
+        .testTarget(name: "SetctlCoreTests", dependencies: ["SetctlCore"]),
+        .testTarget(name: "SetctlDataTests", dependencies: ["SetctlData"]),
+        .testTarget(name: "SetctlFeaturesTests", dependencies: ["SetctlFeatures"]),
     ]
 )

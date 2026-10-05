@@ -27,4 +27,4 @@ excluded:
   - .build
   - Modules/.build
   # Xcode-generated UI-test boilerplate; lint once it's replaced with real tests.
-  - Repd/RepdUITests
+  - Setctl/SetctlUITests
