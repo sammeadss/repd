@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ActiveSessionView: View {
     @Environment(AppModel.self) private var appModel
+    @Environment(\.dismiss) private var dismiss
     @State private var model: ActiveSessionModel?
     @State private var showingPicker = false
     @State private var showingSummary = false
@@ -89,6 +90,11 @@ struct ActiveSessionView: View {
                         totalSets: model.totalSets,
                         totalVolume: model.totalVolume
                     )
+                }
+                .onChange(of: showingSummary) { wasShowingSummary, isShowingSummary in
+                    if wasShowingSummary, !isShowingSummary {
+                        dismiss()
+                    }
                 }
             }
         }
