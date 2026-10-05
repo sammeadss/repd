@@ -13,14 +13,21 @@ struct SessionExerciseRow: View {
     let item: SessionExercise
     let onAddSet: (Int, Double) -> Void
     let onDeleteSet: (String) -> Void
+    let onMoveSets: (IndexSet, Int) -> Void
 
     @State private var reps: Int
     @State private var weight: Double
 
-    init(item: SessionExercise, onAddSet: @escaping (Int, Double) -> Void, onDeleteSet: @escaping (String) -> Void) {
+    init(
+        item: SessionExercise,
+        onAddSet: @escaping (Int, Double) -> Void,
+        onDeleteSet: @escaping (String) -> Void,
+        onMoveSets: @escaping (IndexSet, Int) -> Void
+    ) {
         self.item = item
         self.onAddSet = onAddSet
         self.onDeleteSet = onDeleteSet
+        self.onMoveSets = onMoveSets
         _reps = State(initialValue: item.previousSets.first?.reps ?? 8)
         _weight = State(initialValue: item.previousSets.first?.weight ?? 20.0)
     }
@@ -51,6 +58,9 @@ struct SessionExerciseRow: View {
             for index in offsets {
                 onDeleteSet(item.sets[index].id)
             }
+        }
+        .onMove { source, destination in
+            onMoveSets(source, destination)
         }
 
         Stepper("\(reps) reps", value: $reps, in: 1 ... 50)

@@ -100,6 +100,16 @@ final class ActiveSessionModel {
         }
     }
 
+    func moveSets(in sessionExerciseId: String, from source: IndexSet, to destination: Int) {
+        guard let index = exercises.firstIndex(where: { $0.id == sessionExerciseId }) else { return }
+
+        exercises[index].sets.move(fromOffsets: source, toOffset: destination)
+
+        for newPosition in exercises[index].sets.indices {
+            exercises[index].sets[newPosition].position = newPosition
+        }
+    }
+
     var totalSets: Int {
         exercises.flatMap(\.sets).count
     }
