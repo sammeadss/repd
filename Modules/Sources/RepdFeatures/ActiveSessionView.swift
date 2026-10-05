@@ -26,6 +26,12 @@ struct ActiveSessionView: View {
                         .foregroundStyle(Palette.green)
                         .padding(.top, Spacing.md)
 
+                    TimelineView(.periodic(from: model.workout.startedAt, by: 1)) { context in
+                        Text(formattedElapsed(from: model.workout.startedAt, to: context.date))
+                            .font(Typography.label)
+                            .foregroundStyle(Palette.greenDim)
+                    }
+
                     List {
                         ForEach(model.exercises) { item in
                             Section {
@@ -77,5 +83,10 @@ struct ActiveSessionView: View {
                 model = ActiveSessionModel(workoutRepository: appModel.workoutRepository)
             }
         }
+    }
+
+    private func formattedElapsed(from startedAt: Date, to now: Date) -> String {
+        Duration.seconds(now.timeIntervalSince(startedAt))
+            .formatted(.time(pattern: .minuteSecond))
     }
 }
