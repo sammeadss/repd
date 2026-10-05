@@ -113,6 +113,53 @@ import Testing
     #expect(lastSets == newerDetails.exercises[0].sets)
 }
 
+@Test func fetchRecentWorkoutsReturnsEndedWorkoutsNewestFirst() throws {
+    let database = try AppDatabase.empty()
+    let repository = WorkoutRepository(database: database)
+
+    let exercise = Exercise(
+        name: "Deadlift", primaryMuscle: "back",
+        isBodyweight: false, isCustom: false, ownerId: nil,
+        updatedAt: Date(timeIntervalSince1970: 1_000_000), deletedAt: nil
+    )
+    try database.write { db in try exercise.save(db) }
+
+    let olderStart = Date(timeIntervalSince1970: 1_000_000)
+    let olderEnd = Date(timeIntervalSince1970: 1_000_600)
+    let newerStart = Date(timeIntervalSince1970: 2_000_000)
+    let newerEnd = Date(timeIntervalSince1970: 2_001_200)
+
+    let olderDetails = makeDetails(exercise: exercise, date: olderStart, endedAt: olderEnd, sets: [(5, 100)])
+    let newerDetails = makeDetails(exercise: exercise, date: newerStart, endedAt: newerEnd, sets: [(8, 60), (8, 62.5)])
+
+    try repository.save(olderDetails)
+    try repository.save(newerDetails)
+
+    let summaries = try repository.fetchRecentWorkouts()
+
+    #expect(summaries.map(\.id) == [newerDetails.workout.id, olderDetails.workout.id])
+    #expect(summaries[0].duration == 1200)
+    #expect(summaries[0].totalVolume == 8 * 60.0 + 8 * 62.5)
+}
+
+@Test func fetchRecentWorkoutsExcludesUnendedWorkouts() throws {
+    let database = try AppDatabase.empty()
+    let repository = WorkoutRepository(database: database)
+
+    let exercise = Exercise(
+        name: "Row", primaryMuscle: "back",
+        isBodyweight: false, isCustom: false, ownerId: nil,
+        updatedAt: Date(timeIntervalSince1970: 1_000_000), deletedAt: nil
+    )
+    try database.write { db in try exercise.save(db) }
+
+    let inProgress = makeDetails(exercise: exercise, date: Date(timeIntervalSince1970: 1_000_000), sets: [(5, 50)])
+    try repository.save(inProgress)
+
+    let summaries = try repository.fetchRecentWorkouts()
+    #expect(summaries.isEmpty)
+}
+
 @Test func fetchLastSetsReturnsEmptyWithoutHistory() throws {
     let database = try AppDatabase.empty()
     let repository = WorkoutRepository(database: database)
@@ -124,10 +171,11 @@ import Testing
 private func makeDetails(
     exercise: Exercise,
     date: Date,
+    endedAt: Date? = nil,
     sets: [(reps: Int, weight: Double)]
 ) -> WorkoutDetails {
     let workout = Workout(
-        startedAt: date, endedAt: nil, note: nil,
+        startedAt: date, endedAt: endedAt, note: nil,
         createdAt: date, updatedAt: date, deletedAt: nil
     )
     let workoutExercise = WorkoutExercise(

@@ -25,6 +25,7 @@ let package = Package(
         .target(
             name: "RepdData",
             dependencies: [
+                "RepdCore",
                 .product(name: "GRDB", package: "GRDB.swift"),
             ]
         ),
