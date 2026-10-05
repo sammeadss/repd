@@ -15,11 +15,17 @@ struct ExercisePickerView: View {
     let onSelect: (Exercise) -> Void
 
     var body: some View {
-        List(exercises) { exercise in
-            Button(exercise.name) {
-                onSelect(exercise)
+        ZStack {
+            Palette.black.ignoresSafeArea()
+
+            List(exercises) { exercise in
+                Button(exercise.name) {
+                    onSelect(exercise)
+                }
+                .foregroundStyle(Palette.green)
+                .listRowBackground(Color.clear)
             }
-            .foregroundStyle(Palette.green)
+            .scrollContentBackground(.hidden)
         }
         .task {
             do {
