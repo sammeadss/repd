@@ -7,6 +7,7 @@
 
 import Foundation
 import GRDB
+import RepdCore
 
 public struct WorkoutRepository {
     private let database: AppDatabase
@@ -80,6 +81,37 @@ public struct WorkoutRepository {
                 .filter(Column("deletedAt") == nil)
                 .order(Column("position"))
                 .fetchAll(db)
+        }
+    }
+
+    public func fetchRecentWorkouts() throws -> [WorkoutSummary] {
+        try database.read { db in
+            let workouts = try Workout
+                .filter(Column("deletedAt") == nil)
+                .filter(Column("endedAt") != nil)
+                .order(Column("startedAt").desc)
+                .fetchAll(db)
+
+            return try workouts.map { workout in
+                let workoutExerciseIds = try WorkoutExercise
+                    .filter(Column("workoutId") == workout.id)
+                    .fetchAll(db)
+                    .map(\.id)
+
+                let sets = try SetEntry
+                    .filter(workoutExerciseIds.contains(Column("workoutExerciseId")))
+                    .filter(Column("deletedAt") == nil)
+                    .fetchAll(db)
+
+                let totalVolume = WorkoutMath.totalVolume(of: sets.map { (reps: $0.reps, weight: $0.weight) })
+
+                return WorkoutSummary(
+                    id: workout.id,
+                    startedAt: workout.startedAt,
+                    duration: (workout.endedAt ?? workout.startedAt).timeIntervalSince(workout.startedAt),
+                    totalVolume: totalVolume
+                )
+            }
         }
     }
 }
