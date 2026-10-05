@@ -12,20 +12,30 @@ import SwiftUI
 struct ExercisePickerView: View {
     @Environment(AppModel.self) private var appModel
     @State private var exercises: [Exercise] = []
+    @State private var searchText = ""
     let onSelect: (Exercise) -> Void
 
-    var body: some View {
-        ZStack {
-            Palette.black.ignoresSafeArea()
+    private var filteredExercises: [Exercise] {
+        searchText.isEmpty
+            ? exercises
+            : exercises.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
 
-            List(exercises) { exercise in
-                Button(exercise.name) {
-                    onSelect(exercise)
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Palette.black.ignoresSafeArea()
+
+                List(filteredExercises) { exercise in
+                    Button(exercise.name) {
+                        onSelect(exercise)
+                    }
+                    .foregroundStyle(Palette.green)
+                    .listRowBackground(Color.clear)
                 }
-                .foregroundStyle(Palette.green)
-                .listRowBackground(Color.clear)
+                .scrollContentBackground(.hidden)
             }
-            .scrollContentBackground(.hidden)
+            .searchable(text: $searchText, prompt: "Search exercises")
         }
         .task {
             do {
