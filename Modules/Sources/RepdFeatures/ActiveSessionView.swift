@@ -20,29 +20,42 @@ struct ActiveSessionView: View {
             Palette.black.ignoresSafeArea()
 
             if let model {
-                VStack(spacing: Spacing.md) {
+                VStack(spacing: 0) {
                     Text("SESSION")
                         .font(Typography.title)
                         .foregroundStyle(Palette.green)
+                        .padding(.top, Spacing.md)
 
-                    ForEach(model.exercises) { item in
-                        SessionExerciseRow(item: item) { reps, weight in
-                            model.addSet(to: item.id, reps: reps, weight: weight)
+                    List {
+                        ForEach(model.exercises) { item in
+                            Section {
+                                SessionExerciseRow(item: item) { reps, weight in
+                                    model.addSet(to: item.id, reps: reps, weight: weight)
+                                } onDeleteSet: { setId in
+                                    model.deleteSet(from: item.id, setId: setId)
+                                }
+                                .listRowBackground(Color.clear)
+                            }
+                        }
+
+                        Section {
+                            Button("+ Add Exercise") {
+                                showingPicker = true
+                            }
+                            .font(Typography.body)
+                            .foregroundStyle(Palette.green)
+                            .listRowBackground(Color.clear)
+
+                            Button("END SESSION") {
+                                model.endSession()
+                                showingSummary = true
+                            }
+                            .font(Typography.body)
+                            .foregroundStyle(Palette.green)
+                            .listRowBackground(Color.clear)
                         }
                     }
-
-                    Button("+ Add Exercise") {
-                        showingPicker = true
-                    }
-                    .font(Typography.body)
-                    .foregroundStyle(Palette.green)
-
-                    Button("END SESSION") {
-                        model.endSession()
-                        showingSummary = true
-                    }
-                    .font(Typography.body)
-                    .foregroundStyle(Palette.green)
+                    .scrollContentBackground(.hidden)
                 }
                 .sheet(isPresented: $showingPicker) {
                     ExercisePickerView { exercise in
