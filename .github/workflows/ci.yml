@@ -19,6 +19,16 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Cache SwiftPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            Modules/.build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Modules/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Install linters
         run: brew install swiftlint swiftformat
 
