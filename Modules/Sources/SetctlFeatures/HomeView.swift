@@ -10,6 +10,7 @@ import SwiftUI
 
 public struct HomeView: View {
     @State private var isSessionActive = false
+    @State private var isSettingsPresented = false
 
     public init() {}
 
@@ -30,8 +31,19 @@ public struct HomeView: View {
                     .foregroundStyle(Palette.green)
                 }
             }
+            .toolbar {
+                Button {
+                    isSettingsPresented = true
+                } label: {
+                    Image(systemName: "gear")
+                }
+                .foregroundStyle(Palette.green)
+            }
             .navigationDestination(isPresented: $isSessionActive) {
                 ActiveSessionView()
+            }
+            .sheet(isPresented: $isSettingsPresented) {
+                SettingsView()
             }
         }
     }
