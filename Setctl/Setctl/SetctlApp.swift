@@ -8,6 +8,7 @@
 import SetctlData
 import SetctlDesignSystem
 import SetctlFeatures
+import Supabase
 import SwiftUI
 
 @main
@@ -17,7 +18,8 @@ struct SetctlApp: App {
     init() {
         do {
             let database = try AppDatabase.makeShared()
-            _appModel = State(initialValue: AppModel(database: database))
+            let supabaseClient = SupabaseConfig.makeClient()
+            _appModel = State(initialValue: AppModel(database: database, supabaseClient: supabaseClient))
         } catch {
             fatalError("Failed to initialize the database: \(error)")
         }
