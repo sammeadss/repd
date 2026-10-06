@@ -18,7 +18,16 @@ struct SettingsView: View {
             ZStack {
                 Palette.black.ignoresSafeArea()
 
-                content
+                VStack(spacing: Spacing.lg) {
+                    Text("SETTINGS")
+                        .font(Typography.title)
+                        .foregroundStyle(Palette.green)
+
+                    unitsRow
+
+                    accountSection
+                }
+                .padding(Spacing.lg)
             }
             .toolbar {
                 Button("DONE") { dismiss() }
@@ -27,23 +36,37 @@ struct SettingsView: View {
         }
     }
 
+    private var unitsRow: some View {
+        VStack(spacing: Spacing.xs) {
+            Text("UNITS")
+                .font(Typography.label)
+                .foregroundStyle(Palette.greenDim)
+
+            Picker(
+                "Units",
+                selection: Binding(
+                    get: { appModel.profile.units },
+                    set: { appModel.setUnits($0) }
+                )
+            ) {
+                Text("kg").tag("kg")
+                Text("lb").tag("lb")
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+
     @ViewBuilder
-    private var content: some View {
+    private var accountSection: some View {
         switch appModel.authState {
         case .guest:
             AuthView()
         case .signedIn:
-            VStack(spacing: Spacing.lg) {
-                Text("SETTINGS")
-                    .font(Typography.title)
-                    .foregroundStyle(Palette.green)
-
-                Button("SIGN OUT") {
-                    Task { try? await appModel.authRepository.signOut() }
-                }
-                .font(Typography.body)
-                .foregroundStyle(Palette.greenDim)
+            Button("SIGN OUT") {
+                Task { try? await appModel.authRepository.signOut() }
             }
+            .font(Typography.body)
+            .foregroundStyle(Palette.greenDim)
         }
     }
 }
@@ -51,5 +74,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         // swiftlint:disable:next force_try
-        .environment(AppModel(database: try! .empty(), supabaseClient: SupabaseConfig.makeClient()))
+        .environment(try! AppModel(database: .empty(), supabaseClient: SupabaseConfig.makeClient()))
 }
