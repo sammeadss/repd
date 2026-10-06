@@ -116,5 +116,5 @@ public struct AuthView: View {
 #Preview {
     AuthView()
         // swiftlint:disable:next force_try
-        .environment(AppModel(database: try! .empty(), supabaseClient: SupabaseConfig.makeClient()))
+        .environment(try! AppModel(database: .empty(), supabaseClient: SupabaseConfig.makeClient()))
 }
