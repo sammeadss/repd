@@ -19,9 +19,9 @@ struct SetctlApp: App {
         do {
             let database = try AppDatabase.makeShared()
             let supabaseClient = SupabaseConfig.makeClient()
-            _appModel = State(initialValue: AppModel(database: database, supabaseClient: supabaseClient))
+            _appModel = try State(initialValue: AppModel(database: database, supabaseClient: supabaseClient))
         } catch {
-            fatalError("Failed to initialize the database: \(error)")
+            fatalError("Failed to initialize the app: \(error)")
         }
     }
 
