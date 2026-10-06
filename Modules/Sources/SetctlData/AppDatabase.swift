@@ -25,9 +25,7 @@ public struct AppDatabase {
         migrator.registerMigration("v1: initial schema") { db in
             try db.create(table: "profile") { t in
                 t.primaryKey("id", .text)
-                t.column("handle", .text)
                 t.column("units", .text).notNull()
-                t.column("defaultRestS", .integer).notNull()
                 t.column("createdAt", .datetime).notNull()
                 t.column("updatedAt", .datetime).notNull()
             }
