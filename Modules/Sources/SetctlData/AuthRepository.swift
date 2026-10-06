@@ -14,7 +14,31 @@ public struct AuthRepository: Sendable {
         self.client = client
     }
 
-    public func currentUserId() async -> String? {
-        try? await client.auth.session.user.id.uuidString
+    public func signUp(email: String, password: String) async throws {
+        try await client.auth.signUp(email: email, password: password)
+    }
+
+    public func signIn(email: String, password: String) async throws {
+        try await client.auth.signIn(email: email, password: password)
+    }
+
+    public func signOut() async throws {
+        try await client.auth.signOut()
+    }
+
+    public var stateChanges: AsyncStream<AuthState> {
+        AsyncStream { continuation in
+            let task = Task {
+                for await (_, session) in client.auth.authStateChanges {
+                    if let session, !session.isExpired {
+                        continuation.yield(.signedIn(userId: session.user.id.uuidString))
+                    } else {
+                        continuation.yield(.guest)
+                    }
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
     }
 }
