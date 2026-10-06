@@ -23,15 +23,9 @@ public final class AppModel {
         authRepository = AuthRepository(client: supabaseClient)
 
         Task {
-            await refreshAuthState()
-        }
-    }
-
-    private func refreshAuthState() async {
-        if let userId = await authRepository.currentUserId() {
-            authState = .signedIn(userId: userId)
-        } else {
-            authState = .guest
+            for await state in authRepository.stateChanges {
+                authState = state
+            }
         }
     }
 }
