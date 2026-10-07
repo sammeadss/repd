@@ -12,6 +12,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppModel.self) private var appModel
     @Environment(\.dismiss) private var dismiss
+    @AppStorage(StorageKey.scanlinesEnabled) private var isScanLinesEnabled = true
 
     var body: some View {
         NavigationStack {
@@ -24,6 +25,8 @@ struct SettingsView: View {
                         .foregroundStyle(Palette.green)
 
                     unitsRow
+
+                    scanlinesRow
 
                     accountSection
                 }
@@ -54,6 +57,13 @@ struct SettingsView: View {
             }
             .pickerStyle(.segmented)
         }
+    }
+
+    private var scanlinesRow: some View {
+        Toggle("SCANLINES", isOn: $isScanLinesEnabled)
+            .font(Typography.label)
+            .foregroundStyle(Palette.greenDim)
+            .tint(Palette.green)
     }
 
     @ViewBuilder

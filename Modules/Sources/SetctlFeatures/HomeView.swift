@@ -11,6 +11,7 @@ import SwiftUI
 public struct HomeView: View {
     @State private var isSessionActive = false
     @State private var isSettingsPresented = false
+    @AppStorage(StorageKey.scanlinesEnabled) private var isScanlinesEnabled = true
 
     public init() {}
 
@@ -33,6 +34,7 @@ public struct HomeView: View {
                     }
                 }
             }
+            .scanlines(isEnabled: isScanlinesEnabled)
             .toolbar {
                 Button {
                     isSettingsPresented = true
