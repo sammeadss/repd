@@ -107,7 +107,7 @@ public struct AuthView: View {
             do {
                 try await appModel.authRepository.signUp(email: email, password: password)
             } catch {
-                errorMessage = "ACCESS DENIED"
+                errorMessage = error.localizedDescription
             }
         }
     }
