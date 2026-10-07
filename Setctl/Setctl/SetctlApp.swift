@@ -10,16 +10,20 @@ import SetctlDesignSystem
 import SetctlFeatures
 import Supabase
 import SwiftUI
+import UIKit
 
 @main
 struct SetctlApp: App {
     @State private var appModel: AppModel
+    @State private var hasBooted = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init() {
         do {
             let database = try AppDatabase.makeShared()
             let supabaseClient = SupabaseConfig.makeClient()
             _appModel = try State(initialValue: AppModel(database: database, supabaseClient: supabaseClient))
+            _hasBooted = State(initialValue: UIAccessibility.isReduceMotionEnabled)
         } catch {
             fatalError("Failed to initialize the app: \(error)")
         }
@@ -27,19 +31,25 @@ struct SetctlApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TabView {
-                HomeView()
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
+            if hasBooted || reduceMotion {
+                TabView {
+                    HomeView()
+                        .tabItem {
+                            Label("Home", systemImage: "house")
+                        }
 
-                HistoryView()
-                    .tabItem {
-                        Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                    }
+                    HistoryView()
+                        .tabItem {
+                            Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                        }
+                }
+                .tint(Palette.green)
+                .environment(appModel)
+            } else {
+                BootView {
+                    hasBooted = true
+                }
             }
-            .tint(Palette.green)
-            .environment(appModel)
         }
     }
 }
