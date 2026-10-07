@@ -18,6 +18,7 @@ public struct BootView: View {
 
     @State private var phase: Phase = .scramble
     @State private var isSkipped = false
+    @State private var bloomIntensity: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage(StorageKey.hapticsEnabled) private var isHapticsEnabled = true
 
@@ -56,6 +57,7 @@ public struct BootView: View {
             Text(figureB)
                 .font(.system(size: figureFontSize, design: .monospaced))
                 .foregroundStyle(Palette.green)
+                .bloom(intensity: bloomIntensity)
         case .resolve:
             Text("SETCTL")
                 .font(Typography.hero)
@@ -78,6 +80,8 @@ public struct BootView: View {
         withAnimation(.easeInOut(duration: 0.8)) { phase = .transition }
         if isHapticsEnabled {
             hapticEngine.playFlexPump()
+            withAnimation(.easeOut(duration: 0.15)) { bloomIntensity = 1 }
+            withAnimation(.easeIn(duration: 0.65).delay(0.15)) { bloomIntensity = 0 }
         }
 
         try? await Task.sleep(for: .seconds(1.2))
