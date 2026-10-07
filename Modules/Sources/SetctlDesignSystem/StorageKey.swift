@@ -7,4 +7,5 @@
 
 public enum StorageKey {
     public static let scanlinesEnabled = "scanlinesEnabled"
+    public static let hapticsEnabled = "hapticsEnabled"
 }

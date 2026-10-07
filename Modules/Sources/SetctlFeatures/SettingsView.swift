@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Environment(AppModel.self) private var appModel
     @Environment(\.dismiss) private var dismiss
     @AppStorage(StorageKey.scanlinesEnabled) private var isScanLinesEnabled = true
+    @AppStorage(StorageKey.hapticsEnabled) private var isHapticsEnabled = true
 
     var body: some View {
         NavigationStack {
@@ -27,6 +28,8 @@ struct SettingsView: View {
                     unitsRow
 
                     scanlinesRow
+
+                    hapticsRow
 
                     accountSection
                 }
@@ -61,6 +64,13 @@ struct SettingsView: View {
 
     private var scanlinesRow: some View {
         Toggle("SCANLINES", isOn: $isScanLinesEnabled)
+            .font(Typography.label)
+            .foregroundStyle(Palette.greenDim)
+            .tint(Palette.green)
+    }
+
+    private var hapticsRow: some View {
+        Toggle("HAPTICS", isOn: $isHapticsEnabled)
             .font(Typography.label)
             .foregroundStyle(Palette.greenDim)
             .tint(Palette.green)

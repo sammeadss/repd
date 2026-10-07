@@ -19,6 +19,9 @@ public struct BootView: View {
     @State private var phase: Phase = .scramble
     @State private var isSkipped = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage(StorageKey.hapticsEnabled) private var isHapticsEnabled = true
+
+    private let hapticEngine = HapticEngine()
     let onFinished: () -> Void
 
     public init(onFinished: @escaping () -> Void) {
@@ -73,6 +76,9 @@ public struct BootView: View {
         try? await Task.sleep(for: .seconds(1.2))
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.8)) { phase = .transition }
+        if isHapticsEnabled {
+            hapticEngine.playFlexPump()
+        }
 
         try? await Task.sleep(for: .seconds(1.2))
         guard !isSkipped else { return }
