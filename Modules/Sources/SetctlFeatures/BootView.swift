@@ -15,16 +15,16 @@ public struct BootView: View {
         case transition
         case resolve
     }
-    
+
     @State private var phase: Phase = .scramble
     @State private var isSkipped = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let onFinished: () -> Void
-    
+
     public init(onFinished: @escaping () -> Void) {
         self.onFinished = onFinished
     }
-    
+
     public var body: some View {
         ZStack {
             Palette.black.ignoresSafeArea()
@@ -35,7 +35,7 @@ public struct BootView: View {
         .onTapGesture { skip() }
         .task { await runSequence() }
     }
-    
+
     @ViewBuilder
     private var content: some View {
         switch phase {
@@ -59,43 +59,43 @@ public struct BootView: View {
                 .foregroundStyle(Palette.green)
         }
     }
-    
+
     private func runSequence() async {
         guard !reduceMotion else {
             finish()
             return
         }
-        
+
         try? await Task.sleep(for: .seconds(1.2))
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.6)) { phase = .decode }
-        
+
         try? await Task.sleep(for: .seconds(1.2))
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.8)) { phase = .transition }
-        
+
         try? await Task.sleep(for: .seconds(1.2))
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.6)) { phase = .resolve }
-        
+
         try? await Task.sleep(for: .seconds(1))
         guard !isSkipped else { return }
         finish()
     }
-    
+
     private func skip() {
         isSkipped = true
         finish()
     }
-    
+
     private func finish() {
         onFinished()
     }
-    
+
     private let figureFontSize: CGFloat = 6
     private let figureColumns = 90
     private let figureRows = 108
-    
+
     private let figureA = #"""
                                   .-+*####*+-.
                                 :*#%%%%%%%%%%#*-
@@ -201,13 +201,13 @@ public struct BootView: View {
                          .:-=+#%@%%%%%%%%%%%%%%%*                           %%%.
                         +*####******************:                           +#:
     """#
-    
+
     private let figureB = #"""
      \o/
       |
      / \
     """#
-    
+
     private func randomNoise() -> String {
         let glyphs = Array("01#$%&*@!?+=-:.")
         return (0 ..< figureRows)
