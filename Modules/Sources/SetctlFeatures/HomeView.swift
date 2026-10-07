@@ -24,11 +24,13 @@ public struct HomeView: View {
                         .font(Typography.hero)
                         .foregroundStyle(Palette.green)
 
-                    Button("Begin_") {
-                        isSessionActive = true
+                    CornerFrame {
+                        Button("Begin") {
+                            isSessionActive = true
+                        }
+                        .font(Typography.title)
+                        .foregroundStyle(Palette.green)
                     }
-                    .font(Typography.title)
-                    .foregroundStyle(Palette.green)
                 }
             }
             .toolbar {
