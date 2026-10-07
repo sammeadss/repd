@@ -54,10 +54,18 @@ public struct BootView: View {
                 .font(.system(size: figureFontSize, design: .monospaced))
                 .foregroundStyle(Palette.green)
         case .transition:
-            Text(figureB)
-                .font(.system(size: figureFontSize, design: .monospaced))
-                .foregroundStyle(Palette.green)
-                .bloom(intensity: bloomIntensity)
+            let start = Date()
+            TimelineView(.periodic(from: start, by: frameInterval)) { context in
+                let elapsed = context.date.timeIntervalSince(start)
+                let index = Int(elapsed / frameInterval)
+                let frame = transitionFrames.isEmpty
+                    ? figureA
+                    : transitionFrames[min(index, transitionFrames.count - 1)]
+                Text(frame)
+                    .font(.system(size: figureFontSize, design: .monospaced))
+                    .foregroundStyle(Palette.green)
+                    .bloom(intensity: bloomIntensity)
+            }
         case .resolve:
             Text("SETCTL")
                 .font(Typography.hero)
@@ -75,7 +83,7 @@ public struct BootView: View {
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.6)) { phase = .decode }
 
-        try? await Task.sleep(for: .seconds(1.2))
+        try? await Task.sleep(for: .seconds(transitionHoldDuration))
         guard !isSkipped else { return }
         withAnimation(.easeInOut(duration: 0.8)) { phase = .transition }
         if isHapticsEnabled {
@@ -105,6 +113,12 @@ public struct BootView: View {
     private let figureFontSize: CGFloat = 6
     private let figureColumns = 90
     private let figureRows = 108
+    private let transitionHoldDuration: TimeInterval = 1.2
+    private let transitionFrames = BootView.loadTransitionFrames()
+
+    private var frameInterval: TimeInterval {
+        transitionHoldDuration / Double(max(transitionFrames.count, 1))
+    }
 
     private let figureA = #"""
                                   .-+*####*+-.
@@ -212,11 +226,14 @@ public struct BootView: View {
                         +*####******************:                           +#:
     """#
 
-    private let figureB = #"""
-     \o/
-      |
-     / \
-    """#
+    private static func loadTransitionFrames() -> [String] {
+        guard
+            let url = Bundle.module.url(forResource: "frames", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let frames = try? JSONDecoder().decode([String].self, from: data)
+        else { return [] }
+        return frames
+    }
 
     private func randomNoise() -> String {
         let glyphs = Array("01#$%&*@!?+=-:.")
