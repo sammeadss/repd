@@ -100,7 +100,7 @@ public struct BootView: View {
     private let transitionHoldDuration: TimeInterval = 1.2
     private let resolveHoldDuration: TimeInterval = 1.05
     private let revealDuration: TimeInterval = 0.3
-    private let bloomTriggerFrameIndex = 10 // frame 7, 0-indexed — the flex-pump peak pose
+    private let bloomTriggerFrameIndex = 10
     private let poseHoldDuration: TimeInterval = 0.4
     private let morphDuration: TimeInterval = 0.6
     private let transitionFrames = BootView.loadTransitionFrames()
