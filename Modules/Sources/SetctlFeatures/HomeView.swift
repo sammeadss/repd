@@ -19,19 +19,12 @@ public struct HomeView: View {
         NavigationStack {
             ZStack {
                 Palette.black.ignoresSafeArea()
-
-                VStack(spacing: Spacing.lg) {
-                    Text("SETCTL")
-                        .font(Typography.hero)
-                        .foregroundStyle(Palette.green)
-
-                    CornerFrame {
-                        Button("Begin") {
-                            isSessionActive = true
-                        }
-                        .font(Typography.title)
-                        .foregroundStyle(Palette.green)
+                CornerFrame {
+                    Button("Begin") {
+                        isSessionActive = true
                     }
+                    .font(Typography.title)
+                    .foregroundStyle(Palette.green)
                 }
             }
             .scanlines(isEnabled: isScanlinesEnabled)
