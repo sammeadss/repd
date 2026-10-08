@@ -43,24 +43,24 @@ public struct BootView: View {
     }
 
     private func currentFrame(at elapsed: TimeInterval) -> String {
-        if elapsed < scrambleDuration {
+        switch elapsed {
+        case ..<scrambleDuration:
             return randomNoise()
-        }
-
-        let sweepElapsed = elapsed - scrambleDuration
-        if sweepElapsed < sweepDuration {
-            let progress = sweepElapsed / sweepDuration
-            return sweepReveal(progress: progress, target: transitionFrames.first ?? "")
-        }
-
-        let transitionElapsed = sweepElapsed - sweepDuration
-        if transitionElapsed < transitionHoldDuration {
+        case ..<revealEndTime:
+            let progress = (elapsed - scrambleDuration) / revealDuration
+            return cellReveal(progress: progress, target: transitionFrames.first ?? "")
+        case ..<transitionEndTime:
             guard !transitionFrames.isEmpty else { return "" }
-            let index = Int(transitionElapsed / frameInterval)
+            let index = Int((elapsed - revealEndTime) / frameInterval)
             return transitionFrames[min(index, transitionFrames.count - 1)]
+        case ..<holdEndTime:
+            return transitionFrames.last ?? resolveFrame
+        case ..<morphEndTime:
+            let progress = (elapsed - holdEndTime) / morphDuration
+            return morphedFrame(progress: progress, from: transitionFrames.last ?? resolveFrame, to: resolveFrame)
+        default:
+            return resolveFrame
         }
-
-        return resolveFrame
     }
 
     private func runSequence() async {
@@ -69,7 +69,8 @@ public struct BootView: View {
             return
         }
 
-        try? await Task.sleep(for: .seconds(scrambleDuration + sweepDuration))
+        let bloomDelay = scrambleDuration + revealDuration + Double(bloomTriggerFrameIndex) * frameInterval
+        try? await Task.sleep(for: .seconds(bloomDelay))
         guard !isSkipped else { return }
         if isHapticsEnabled {
             hapticEngine.playFlexPump()
@@ -77,7 +78,7 @@ public struct BootView: View {
             withAnimation(.easeIn(duration: 0.65).delay(0.15)) { bloomIntensity = 0 }
         }
 
-        try? await Task.sleep(for: .seconds(transitionHoldDuration + resolveHoldDuration))
+        try? await Task.sleep(for: .seconds(totalDuration - bloomDelay))
         guard !isSkipped else { return }
         finish()
     }
@@ -97,13 +98,36 @@ public struct BootView: View {
     private let tickInterval: TimeInterval = 0.08
     private let scrambleDuration: TimeInterval = 1.2
     private let transitionHoldDuration: TimeInterval = 1.2
-    private let resolveHoldDuration: TimeInterval = 1.0
-    private let sweepDuration: TimeInterval = 0.7
+    private let resolveHoldDuration: TimeInterval = 1.05
+    private let revealDuration: TimeInterval = 0.3
+    private let bloomTriggerFrameIndex = 10 // frame 7, 0-indexed — the flex-pump peak pose
+    private let poseHoldDuration: TimeInterval = 0.4
+    private let morphDuration: TimeInterval = 0.6
     private let transitionFrames = BootView.loadTransitionFrames()
     private let resolveFrame = BootView.loadResolveFrame()
 
     private var frameInterval: TimeInterval {
         transitionHoldDuration / Double(max(transitionFrames.count, 1))
+    }
+
+    private var revealEndTime: TimeInterval {
+        scrambleDuration + revealDuration
+    }
+
+    private var transitionEndTime: TimeInterval {
+        revealEndTime + transitionHoldDuration
+    }
+
+    private var holdEndTime: TimeInterval {
+        transitionEndTime + poseHoldDuration
+    }
+
+    private var morphEndTime: TimeInterval {
+        holdEndTime + morphDuration
+    }
+
+    private var totalDuration: TimeInterval {
+        morphEndTime + resolveHoldDuration
     }
 
     private static func loadTransitionFrames() -> [String] {
@@ -131,14 +155,37 @@ public struct BootView: View {
             .joined(separator: "\n")
     }
 
-    private func sweepReveal(progress: Double, target: String) -> String {
+    private let cellThresholds = BootView.makeCellThresholds(count: 90 * 115) // matches figureColumns × figureRows
+
+    private static func makeCellThresholds(count: Int) -> [Double] {
+        (0 ..< count).map { _ in Double.random(in: 0 ... 1) }
+    }
+
+    private func cellReveal(progress: Double, target: String) -> String {
         guard !target.isEmpty else { return randomNoise() }
         let targetLines = target.split(separator: "\n", omittingEmptySubsequences: false)
-        let revealedRows = Int(Double(targetLines.count) * progress)
-        return targetLines.enumerated().map { index, line in
-            index < revealedRows
-                ? String(line)
-                : String((0 ..< line.count).map { _ in BootView.noiseGlyphs.randomElement() ?? "." })
+        var cellIndex = 0
+        return targetLines.map { line in
+            let chars = line.map { char -> Character in
+                defer { cellIndex += 1 }
+                let threshold = cellIndex < cellThresholds.count ? cellThresholds[cellIndex] : 1
+                return progress >= threshold ? char : (BootView.noiseGlyphs.randomElement() ?? ".")
+            }
+            return String(chars)
+        }.joined(separator: "\n")
+    }
+
+    private func morphedFrame(progress: Double, from: String, to: String) -> String {
+        let fromLines = from.split(separator: "\n", omittingEmptySubsequences: false)
+        let toLines = to.split(separator: "\n", omittingEmptySubsequences: false)
+        var cellIndex = 0
+        return zip(fromLines, toLines).map { fromLine, toLine in
+            let chars = zip(fromLine, toLine).map { fromChar, toChar -> Character in
+                defer { cellIndex += 1 }
+                let threshold = cellIndex < cellThresholds.count ? cellThresholds[cellIndex] : 1
+                return progress >= threshold ? toChar : fromChar
+            }
+            return String(chars)
         }.joined(separator: "\n")
     }
 }
