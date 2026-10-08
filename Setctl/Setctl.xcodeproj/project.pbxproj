@@ -37,9 +37,22 @@
 		93DF0A132FEC1ABE00E59BD4 /* Modules */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Modules; path = ../Modules; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		937202B43077E0BD00FB3B0B /* Exceptions for "Setctl" folder in "Setctl" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 93BC12A12FE63B0000D0FB3F /* Setctl */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		93BC12A42FE63B0000D0FB3F /* Setctl */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				937202B43077E0BD00FB3B0B /* Exceptions for "Setctl" folder in "Setctl" target */,
+			);
 			path = Setctl;
 			sourceTree = "<group>";
 		};
@@ -420,6 +433,9 @@
 				DEVELOPMENT_TEAM = RFNTBCFY7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Setctl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = setctl;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -453,6 +469,9 @@
 				DEVELOPMENT_TEAM = RFNTBCFY7A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Setctl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = setctl;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
