@@ -9,13 +9,7 @@ import SetctlDesignSystem
 import SwiftUI
 
 public struct BootView: View {
-    private enum Phase {
-        case scramble
-        case transition
-        case resolve
-    }
-
-    @State private var phase: Phase = .scramble
+    @State private var bootStart = Date()
     @State private var isSkipped = false
     @State private var bloomIntensity: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -32,40 +26,41 @@ public struct BootView: View {
         ZStack {
             Palette.black.ignoresSafeArea()
             content
-                .transition(.opacity)
         }
         .contentShape(Rectangle())
         .onTapGesture { skip() }
         .task { await runSequence() }
     }
 
-    @ViewBuilder
     private var content: some View {
-        switch phase {
-        case .scramble:
-            TimelineView(.periodic(from: .now, by: 0.08)) { _ in
-                Text(randomNoise())
-                    .font(.system(size: figureFontSize, design: .monospaced))
-                    .foregroundStyle(Palette.greenDim)
-            }
-        case .transition:
-            let start = Date()
-            TimelineView(.periodic(from: start, by: frameInterval)) { context in
-                let elapsed = context.date.timeIntervalSince(start)
-                let index = Int(elapsed / frameInterval)
-                let frame = transitionFrames.isEmpty
-                    ? ""
-                    : transitionFrames[min(index, transitionFrames.count - 1)]
-                Text(frame)
-                    .font(.system(size: figureFontSize, design: .monospaced))
-                    .foregroundStyle(Palette.green)
-                    .bloom(intensity: bloomIntensity)
-            }
-        case .resolve:
-            Text("SETCTL")
-                .font(Typography.hero)
-                .foregroundStyle(Palette.green)
+        TimelineView(.periodic(from: bootStart, by: tickInterval)) { context in
+            let elapsed = context.date.timeIntervalSince(bootStart)
+            Text(currentFrame(at: elapsed))
+                .font(.system(size: figureFontSize, design: .monospaced))
+                .foregroundStyle(elapsed < scrambleDuration ? Palette.greenDim : Palette.green)
+                .bloom(intensity: bloomIntensity)
         }
+    }
+
+    private func currentFrame(at elapsed: TimeInterval) -> String {
+        if elapsed < scrambleDuration {
+            return randomNoise()
+        }
+
+        let sweepElapsed = elapsed - scrambleDuration
+        if sweepElapsed < sweepDuration {
+            let progress = sweepElapsed / sweepDuration
+            return sweepReveal(progress: progress, target: transitionFrames.first ?? "")
+        }
+
+        let transitionElapsed = sweepElapsed - sweepDuration
+        if transitionElapsed < transitionHoldDuration {
+            guard !transitionFrames.isEmpty else { return "" }
+            let index = Int(transitionElapsed / frameInterval)
+            return transitionFrames[min(index, transitionFrames.count - 1)]
+        }
+
+        return resolveFrame
     }
 
     private func runSequence() async {
@@ -74,20 +69,15 @@ public struct BootView: View {
             return
         }
 
-        try? await Task.sleep(for: .seconds(1.2))
+        try? await Task.sleep(for: .seconds(scrambleDuration + sweepDuration))
         guard !isSkipped else { return }
-        withAnimation(.easeInOut(duration: 0.8)) { phase = .transition }
         if isHapticsEnabled {
             hapticEngine.playFlexPump()
             withAnimation(.easeOut(duration: 0.15)) { bloomIntensity = 1 }
             withAnimation(.easeIn(duration: 0.65).delay(0.15)) { bloomIntensity = 0 }
         }
 
-        try? await Task.sleep(for: .seconds(transitionHoldDuration))
-        guard !isSkipped else { return }
-        withAnimation(.easeInOut(duration: 0.6)) { phase = .resolve }
-
-        try? await Task.sleep(for: .seconds(1))
+        try? await Task.sleep(for: .seconds(transitionHoldDuration + resolveHoldDuration))
         guard !isSkipped else { return }
         finish()
     }
@@ -103,9 +93,14 @@ public struct BootView: View {
 
     private let figureFontSize: CGFloat = 6
     private let figureColumns = 90
-    private let figureRows = 108
+    private let figureRows = 115
+    private let tickInterval: TimeInterval = 0.08
+    private let scrambleDuration: TimeInterval = 1.2
     private let transitionHoldDuration: TimeInterval = 1.2
+    private let resolveHoldDuration: TimeInterval = 1.0
+    private let sweepDuration: TimeInterval = 0.7
     private let transitionFrames = BootView.loadTransitionFrames()
+    private let resolveFrame = BootView.loadResolveFrame()
 
     private var frameInterval: TimeInterval {
         transitionHoldDuration / Double(max(transitionFrames.count, 1))
@@ -120,11 +115,31 @@ public struct BootView: View {
         return frames
     }
 
+    private static func loadResolveFrame() -> String {
+        guard
+            let url = Bundle.module.url(forResource: "setctl_resolve", withExtension: "txt"),
+            let text = try? String(contentsOf: url, encoding: .utf8)
+        else { return "" }
+        return text
+    }
+
+    private static let noiseGlyphs = Array("01#$%&*@!?+=-:.")
+
     private func randomNoise() -> String {
-        let glyphs = Array("01#$%&*@!?+=-:.")
-        return (0 ..< figureRows)
-            .map { _ in String((0 ..< figureColumns).map { _ in glyphs.randomElement() ?? "." }) }
+        (0 ..< figureRows)
+            .map { _ in String((0 ..< figureColumns).map { _ in BootView.noiseGlyphs.randomElement() ?? "." }) }
             .joined(separator: "\n")
+    }
+
+    private func sweepReveal(progress: Double, target: String) -> String {
+        guard !target.isEmpty else { return randomNoise() }
+        let targetLines = target.split(separator: "\n", omittingEmptySubsequences: false)
+        let revealedRows = Int(Double(targetLines.count) * progress)
+        return targetLines.enumerated().map { index, line in
+            index < revealedRows
+                ? String(line)
+                : String((0 ..< line.count).map { _ in BootView.noiseGlyphs.randomElement() ?? "." })
+        }.joined(separator: "\n")
     }
 }
 
