@@ -20,10 +20,10 @@ public struct HomeView: View {
             ZStack {
                 Palette.black.ignoresSafeArea()
                 CornerFrame {
-                    Button("Begin") {
+                    Button("BEGIN") {
                         isSessionActive = true
                     }
-                    .font(Typography.title)
+                    .font(Typography.hero)
                     .foregroundStyle(Palette.green)
                 }
             }
