@@ -21,22 +21,24 @@ struct SettingsView: View {
             ZStack {
                 Palette.black.ignoresSafeArea()
 
-                VStack(spacing: Spacing.lg) {
-                    Text("SETTINGS")
-                        .font(Typography.title)
-                        .foregroundStyle(Palette.green)
+                ScrollView {
+                    VStack(spacing: Spacing.lg) {
+                        Text("SETTINGS")
+                            .font(Typography.title)
+                            .foregroundStyle(Palette.green)
 
-                    unitsRow
+                        unitsRow
 
-                    scanlinesRow
+                        scanlinesRow
 
-                    hapticsRow
+                        hapticsRow
 
-                    highContrastRow
+                        highContrastRow
 
-                    accountSection
+                        accountSection
+                    }
+                    .padding(Spacing.lg)
                 }
-                .padding(Spacing.lg)
             }
             .toolbar {
                 Button("DONE") { dismiss() }
