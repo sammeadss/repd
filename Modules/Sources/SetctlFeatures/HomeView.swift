@@ -35,6 +35,7 @@ public struct HomeView: View {
                     Image(systemName: "gear")
                 }
                 .foregroundStyle(Palette.green)
+                .accessibilityLabel("Settings")
             }
             .navigationDestination(isPresented: $isSessionActive) {
                 ActiveSessionView()
