@@ -14,6 +14,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(StorageKey.scanlinesEnabled) private var isScanLinesEnabled = true
     @AppStorage(StorageKey.hapticsEnabled) private var isHapticsEnabled = true
+    @AppStorage(StorageKey.highContrastEnabled) private var isHighContrastEnabled = false
 
     var body: some View {
         NavigationStack {
@@ -30,6 +31,8 @@ struct SettingsView: View {
                     scanlinesRow
 
                     hapticsRow
+
+                    highContrastRow
 
                     accountSection
                 }
@@ -71,6 +74,13 @@ struct SettingsView: View {
 
     private var hapticsRow: some View {
         Toggle("HAPTICS", isOn: $isHapticsEnabled)
+            .font(Typography.label)
+            .foregroundStyle(Palette.greenDim)
+            .tint(Palette.green)
+    }
+
+    private var highContrastRow: some View {
+        Toggle("HIGH CONTRAST", isOn: $isHighContrastEnabled)
             .font(Typography.label)
             .foregroundStyle(Palette.greenDim)
             .tint(Palette.green)
