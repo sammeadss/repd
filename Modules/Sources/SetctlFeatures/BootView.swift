@@ -30,6 +30,9 @@ public struct BootView: View {
         .contentShape(Rectangle())
         .onTapGesture { skip() }
         .task { await runSequence() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Setctl starting up")
+        .accessibilityAction { skip() }
     }
 
     private var content: some View {
