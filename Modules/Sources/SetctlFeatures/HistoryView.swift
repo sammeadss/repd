@@ -12,6 +12,7 @@ import SwiftUI
 public struct HistoryView: View {
     @Environment(AppModel.self) private var appModel
     @State private var summaries: [WorkoutSummary] = []
+    @AppStorage(StorageKey.scanlinesEnabled) private var isScanlinesEnabled = true
 
     public init() {}
 
@@ -31,6 +32,7 @@ public struct HistoryView: View {
                                 .font(Typography.label)
                                 .foregroundStyle(Palette.greenDim)
                         }
+                        .scanlines(isEnabled: isScanlinesEnabled)
                     }
                     .listRowBackground(Color.clear)
                 }
